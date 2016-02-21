@@ -4,23 +4,28 @@ import (
 	"bufio"
 	"fmt"
 	"net"
+	"time"
 )
 
 func main() {
 	ln, err := net.Listen("tcp", ":8000")
 	if err != nil {
-		fmt.Println("Error Occured")
+		panic(err)
 	} else {
 		fmt.Println("Listening")
 	}
+	defer ln.Close()
+	conn, err := ln.Accept()
+	if err != nil {
+		panic(err)
+
+	}
 	for {
-		conn, err := ln.Accept()
-		if err != nil {
-			fmt.Println("Unable to accept")
-			break
-		}
+
 		message, _ := bufio.NewReader(conn).ReadString('\n')
-		msg := string(message)
-		fmt.Println("Received: ", msg)
+		t := time.Now()
+		msg := t.Format("Mon Jan _2 2006 15:04:05") + ":" + message
+		fmt.Println(msg)
+
 	}
 }
